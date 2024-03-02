@@ -1,4 +1,4 @@
-<div class="">
+<div class="my-8">
     <div class="max-w-xl px-4 py-8 mx-auto bg-white rounded-lg">
     
         @foreach($this->ticket_choices as $choice)
@@ -23,7 +23,7 @@
         @endforeach
 
         <div class="flex flex-row justify-end text-right">
-            <div class="px-4 font-semibold border-t-2">{{ Number::currency($this->total/100, in:'GBP') }}</div>
+            <div class="px-4 pt-2 font-semibold border-t-2 border-zinc-700">{{ Number::currency($this->total/100, in:'GBP') }}</div>
         </div>
 
     </div>
