@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Tickets;
+use App\Livewire\Payment;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,4 +19,6 @@ use App\Livewire\Tickets;
 Route::view('/', 'welcome');
 
 Route::get('tickets', Tickets::class)->name('tickets');
+Route::get('payment', Payment::class)->name('payment');
+Route::get('confirmPayment', PaymentController::class)->name('confirmpayment');
 
