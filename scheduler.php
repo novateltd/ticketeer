@@ -32,14 +32,10 @@ $app = require_once __DIR__.'/bootstrap/app.php';
 
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 
-ray($_SERVER['argv']);
-
 $status = $kernel->handle(
-    $input = new Symfony\Component\Console\Input\ArgvInput(),
+    $input = new Symfony\Component\Console\Input\ArgvInput(['artisan','schedule:run']),
     new Symfony\Component\Console\Output\ConsoleOutput
 );
-
-ray($input);
 
 /*
 |--------------------------------------------------------------------------

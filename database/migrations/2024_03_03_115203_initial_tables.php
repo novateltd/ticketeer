@@ -66,6 +66,9 @@ return new class extends Migration
             $table->integer('cost');
             $table->integer('ticket_count')->default(0);
             $table->string('description');
+            $table->string('tickets_bought')->nullable();
+            $table->string('email')->nullable();
+            $table->string('name')->nullable();
             $table->timestamps();
         });
 

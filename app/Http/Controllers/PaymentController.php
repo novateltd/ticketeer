@@ -78,6 +78,17 @@ class PaymentController extends Controller
             }
             
         }
+
+        return $this->transactionComplete($transaction);
+
     }
+
+
+    private function transactionComplete($transaction)
+    {
+        $transaction->load('event','tickets');
+        return view('transaction-complete')->withTransaction($transaction);
+    }
+
 
 }

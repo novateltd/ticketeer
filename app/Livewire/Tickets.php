@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use Livewire\Attributes\Session;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
+use Livewire\Attributes\Validate;
 
 class Tickets extends Component
 {
@@ -16,8 +17,10 @@ class Tickets extends Component
     public array $ticket_choices = [];
     public int $total = 0;
     public int $event_id;
-    public string $name = '';
-    public string $email = '';
+    public string|null $name = '';
+
+    #[Validate('email:rfc,dns')]
+    public string|null $email = '';
     
     #[Session]
     public int|null $transaction_id = null;
@@ -31,6 +34,16 @@ class Tickets extends Component
         }
 
         $this->event_id = Event::first()->id;
+
+        if($this->transaction_id) {
+            $transaction = Transaction::findOrFail($this->transaction_id);
+
+            $this->email = $transaction->email;
+            $this->name = $transaction->name;
+
+            $this->tickets = json_decode($transaction->tickets_bought,true);
+
+        }
     }
     
 
@@ -90,6 +103,18 @@ class Tickets extends Component
     {
         $this->setupPI();
         session()->put('transaction_id',$this->transaction_id);
+
+        foreach($this->tickets as $key => $ticket) {
+            $this->tickets[$key]['type'] = $this->ticket_choices[$key]['type'];
+        }
+
+        Transaction::where('id', $this->transaction_id)
+            ->update([
+                'tickets_bought' => $this->tickets,
+                'email' => $this->email,
+                'name' => $this->name,
+            ]);
+
         return redirect(route('payment'));
     }
 
