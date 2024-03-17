@@ -2,7 +2,7 @@
 
     <div class="max-w-xl px-4 py-8 mx-auto bg-white rounded-lg shadow-lg">
 
-        <h1 class="text-xl font-bold text-blue-700">{{ $event->description }} {{ $event->date->format('jS F Y') }} at {{ $event->time }}</h1>
+        <h1 class="text-xl font-extrabold text-green-900 uppercase">{{ $event->description }} {{ $event->date->format('jS F Y') }} at {{ $event->time }}</h1>
         
         @if($event->isOnsale)
         
@@ -34,12 +34,23 @@
             </div>
 
             <div class="w-full p-4 mt-6 border rounded-lg shadow-lg">
-                Please provide a contact name and email address incase we need to alter the arrangements for the concert. This is optional.
-                <div class="flex my-4">
+                If you have a promotion code, enter it here:
+                <div class="flex items-center my-4">
+                    <x-input-label class="w-1/4">Code:</x-input-label>
+                    <x-text-input class="w-1/2 uppercase" wire:model.live.debounce.1500ms="code" type="text" />
+                </div>
+                <div class="font-semibold text-red-600">{{ $this->promoMessage }}</div>
+            </div>
+
+            <div class="w-full p-4 mt-6 border rounded-lg shadow-lg">
+                <span class="italic">Optional</span><br />
+                Please provide a contact name and email address so that we can send you a confirmation of purchase email.
+                We will also use these details incase we need to alter the arrangements for the concert.
+                <div class="flex items-center my-4">
                     <x-input-label class="w-1/4">Your Name:</x-input-label>
                     <x-text-input class="w-1/2" wire:model="name" type="text" />
                 </div>
-                <div class="flex my-4">
+                <div class="flex items-center my-4">
                     <x-input-label class="w-1/4">Your Email:</x-input-label>
                     <x-text-input type="email" class="w-1/2" wire:model.blur="email" type="email" />
                 </div>

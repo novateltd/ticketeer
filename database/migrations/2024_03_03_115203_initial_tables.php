@@ -30,7 +30,7 @@ return new class extends Migration
         $event = Event::forceCreate([
             'date' => '2024-04-11',
             'time' => '2pm',
-            'description' => '2024 Classical Piano Concert',
+            'description' => '2024 Piano Extravaganza',
             'slug' => '2024-piano-concert',
             'onsale' => '2024-03-02',
         ]);
@@ -67,8 +67,9 @@ return new class extends Migration
             $table->integer('ticket_count')->default(0);
             $table->string('description');
             $table->string('tickets_bought')->nullable();
-            $table->string('email')->nullable();
-            $table->string('name')->nullable();
+            $table->string('promo',20)->nullable();
+            $table->string('email',100)->nullable();
+            $table->string('name',50)->nullable();
             $table->timestamps();
         });
 

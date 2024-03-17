@@ -15,51 +15,58 @@ class PaymentController extends Controller
 {
     public function __invoke(Request $request)
     {
+        // if id passed in the URL, and transaction found, and status is PAID then just show receipt
 
-        if($request->input('redirect_status') != 'succeeded') {
-            return $this->paymentFailure();
+        if($request->has('id')) {
+            $transaction = Transaction::find($request->input('id'));
+            if(!$transaction) {
+                return $this->error('Transaction was not found (' . $request->input('id') . ')' );
+            }
+
+            if($transaction->status != TransactionEnum::PAID->value) {
+                return $this->error('Transaction is not settled. Contact us (' . $request->input('id') . ')' );
+            }
+
+            return $this->showReceipt($transaction);
         }
 
-        $transaction = Transaction::query()
-                        ->where('payment_intent', $request->input('payment_intent'))
-                        ->first();
+        // if session has transaction id then load transaction and get paymentIntent ID
 
-        if($transaction->status == TransactionEnum::PAID->value) {
-            return $this->transactionComplete($transaction);
+        if(session()->has('transaction_id')) {
+            $transaction = Transaction::find(session('transaction_id'));
+            if(!$transaction) {
+                return $this->error('Transaction in session does not exist');
+            }
+        } else {
+            return $this->error('No transaction specified');
         }
 
-    
-        if($transaction->status == TransactionEnum::PENDING->value) {
-            return $this->verifyTransaction($transaction);
+        // if the total is 0 OR If stripe says paid and the payment amount is correct then 
+            // issue tickets and set final status
+            // mail receipt if we have an email address
+            // redirect to this same controller action with id in url
+
+        if($transaction->cost == 0 || $this->stripeOK($transaction)) {
+
+            $this->issueTickets($transaction);
+            $this->mailReceipt($transaction);
+
+            session()->forget('transaction_id');
+            return redirect(route('confirmpayment', ['id' => $transaction->id]));
+
         }
 
-        return $this->paymentFailure($transaction);
-
-        
+        return ($this->error('We were unable to verify the transaction. Please contact us'));
     }
 
-    private function paymentFailure(Transaction $transaction)
+    private function error($message)
     {
-        return $transaction;
+        Log::error($message);
+        return view('error_view', compact('message'));
     }
 
-    private function verifyTransaction(Transaction $transaction)
+    private function issueTickets(Transaction $transaction): void
     {
-        // call the Stripe API to check if they confirm payment
-
-        Stripe::setApiKey(config('stripe.secret'));
-
-        $pi = PaymentIntent::retrieve($transaction->payment_intent);
-
-        if($pi->amount_received != $transaction->cost) {
-            Log::info('Stripe says that the amount is different');
-            Log::info($transaction);
-            
-            return $this->paymentFailure($transaction);
-        }
-
-        // complete transaction
-
         $transaction->status = TransactionEnum::PAID;
         $transaction->completion = now();
         $transaction->save();
@@ -79,12 +86,38 @@ class PaymentController extends Controller
             
         }
 
-        return $this->transactionComplete($transaction);
+    }
 
+    private function mailReceipt(Transaction $transaction): void 
+    {
+        return;
+    }
+
+    private function stripeOK(Transaction $transaction): bool
+    {
+        // call the Stripe API to check if they confirm payment
+        Stripe::setApiKey(config('stripe.secret'));
+
+        $pi = PaymentIntent::retrieve($transaction->payment_intent);
+
+        if($pi->status != 'succeeded') {
+            Log::info('Stripe status was ' . $pi->status);
+            Log::info($transaction);
+            return false;
+        }
+
+        if($pi->amount_received != $transaction->cost) {
+            Log::info('Stripe says that the amount is different');
+            Log::info($transaction);
+            
+            return false;
+        }
+
+        return true;
     }
 
 
-    private function transactionComplete($transaction)
+    private function showReceipt($transaction)
     {
         $transaction->load('event','tickets');
         return view('transaction-complete')->withTransaction($transaction);

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Tickets;
 use App\Livewire\Payment;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\QrCodeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,4 +22,7 @@ Route::view('/', 'welcome');
 Route::get('tickets', Tickets::class)->name('tickets');
 Route::get('payment', Payment::class)->name('payment');
 Route::get('confirmPayment', PaymentController::class)->name('confirmpayment');
+
+Route::get('qrcode', QrCodeController::class);
+
 
