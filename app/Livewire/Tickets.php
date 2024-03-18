@@ -45,8 +45,11 @@ class Tickets extends Component
             $this->email = $transaction->email;
             $this->name = $transaction->name;
 
-            $this->tickets = json_decode($transaction->tickets_bought,true);
+            $tickets = json_decode($transaction->tickets_bought,true);
 
+            if(is_array($tickets)) {
+                $this->tickets = $tickets;
+            }
         }
     }
     

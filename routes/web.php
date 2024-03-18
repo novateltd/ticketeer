@@ -17,7 +17,7 @@ use App\Http\Controllers\QrCodeController;
 |
 */
 
-Route::view('/', 'welcome');
+Route::redirect('/', '/tickets');
 
 Route::get('tickets', Tickets::class)->name('tickets');
 Route::get('payment', Payment::class)->name('payment');

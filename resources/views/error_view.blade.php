@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-layouts.app>
     <div class="my-8">
 
         <div class="max-w-xl px-4 py-8 mx-auto bg-white rounded-lg shadow-lg">
@@ -9,4 +9,4 @@
             <p class="text-xl">{{ $message }}</p>
         </div>
     </div>
-</x-app-layout>
+</x-layouts.app>

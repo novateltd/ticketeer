@@ -20,7 +20,7 @@
         }
     </style>
 
-    <div class="max-w-xl px-4 py-8 mx-auto mt-8 bg-white rounded-lg shadow-lg">
+    <div class="max-w-xl px-4 py-8 mx-auto bg-white rounded-lg shadow-lg">
 
         <h1 class="my-6 text-xl font-bold uppercase">Pay for your tickets - {{ Number::currency($transaction->cost/100, in: 'GBP') }}</h1>
         <form id="payment-form">

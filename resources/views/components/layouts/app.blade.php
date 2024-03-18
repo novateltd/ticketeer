@@ -1,36 +1,56 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <title>{{ config('app.name') }}</title>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            <livewire:layout.navigation />
 
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white shadow">
-                    <div class="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endif
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+    <style>
+        /* .smooth {transition: box-shadow 0.3s ease-in-out;} */
+        /* ::selection{background-color: aliceblue} */
+	</style>
+
+</head>
+
+<body class="flex flex-col justify-between min-h-screen font-sans leading-normal tracking-normal bg-white">
+
+	<div class="w-full p-0 m-0 bg-[#ebf8ff] md:flex md:justify-between md:items-center lg:px-32" id="nav">
+        <div class="flex items-center justify-between px-4">
+
+		    <div class="">
+				<a class="" href="/">
+                    <img src="/images/club-logo-blue-100.png" class="hidden h-16 mt-2 mb-2 md:block md:h-24"> 
+                    <img src="/images/RotarySimplified.png" class="h-16 mt-2 mb-2 md:hidden md:h-24"> 
+				</a>
+            </div>
         </div>
-    </body>
+    </div>
+
+    <!-- Page Content -->
+    <main class="">
+        {{ $slot }}
+    </main>
+
+    <footer class="bg-gray-900">	
+        <div class="container flex items-center max-w-6xl px-2 py-8 mx-auto"> 
+            <div class="flex flex-wrap items-center w-full mx-auto">
+                <div class="flex justify-start w-1/3">
+                    <a class="text-gray-200 no-underline hover:underline" href="https://rbrotary.org.uk">
+                        <img src="/images/RotaryLogo.png" class="inline w-32 mr-2">
+                        <span class="align-middle">Ravenshead &amp; Blidworth</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
 </html>

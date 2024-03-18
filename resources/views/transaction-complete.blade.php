@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-layouts.app>
     <div class="my-8">
 
         <div class="max-w-xl px-4 py-8 mx-auto bg-white rounded-lg shadow-lg">
@@ -28,16 +28,20 @@
                     <div class="px-4 pt-2 font-semibold border-t-2 border-zinc-700">{{ Number::currency($transaction->cost/100, in:'GBP') }}</div>
                 </div>
 
-                <div class="font-semibold">
-                    Your ticket numbers are;
+                <div class="text-2xl font-semibold">
+                    @if(count($transaction->tickets) == 1)
+                        Your ticket number is {{ $transaction->tickets->first()->number }}
+                    @else
+                        Your ticket numbers are
                             @foreach($transaction->tickets as $ticket)
                                     @if($loop->last && !$loop->first)
-                                        and
+                                        &amp;
                                     @endif
-                                    <span class="text-xl font-bold">{{ $ticket->number }}</span>
+                                    <span class="font-bold">{{ $ticket->number }}</span>@if($loop->remaining == 1 || $loop->last) @else,@endif
                             @endforeach
+                    @endif
                 </div>
                     
         </div>
     </div>
-</x-app-layout>
+</x-layouts.app>

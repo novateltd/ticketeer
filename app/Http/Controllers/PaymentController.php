@@ -10,6 +10,8 @@ use Stripe\PaymentIntent;
 use Illuminate\Support\Facades\Log;
 use App\Enums\TicketEnum;
 use App\Models\Ticket;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Receipt;
 
 class PaymentController extends Controller
 {
@@ -90,7 +92,7 @@ class PaymentController extends Controller
 
     private function mailReceipt(Transaction $transaction): void 
     {
-        return;
+        Mail::to($transaction->email)->send(new Receipt($transaction));
     }
 
     private function stripeOK(Transaction $transaction): bool
