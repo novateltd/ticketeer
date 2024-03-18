@@ -12,6 +12,7 @@ use App\Enums\TicketEnum;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Receipt;
+use Vinkla\Hashids\Facades\Hashids;
 
 class PaymentController extends Controller
 {
@@ -20,7 +21,8 @@ class PaymentController extends Controller
         // if id passed in the URL, and transaction found, and status is PAID then just show receipt
 
         if($request->has('id')) {
-            $transaction = Transaction::find($request->input('id'));
+            $transaction = Transaction::find(Hashids::decode($request->input('id'))[0]);
+            ray($transaction);
             if(!$transaction) {
                 return $this->error('Transaction was not found (' . $request->input('id') . ')' );
             }
@@ -54,7 +56,7 @@ class PaymentController extends Controller
             $this->mailReceipt($transaction);
 
             session()->forget('transaction_id');
-            return redirect(route('confirmpayment', ['id' => $transaction->id]));
+            return redirect(route('confirmpayment', ['id' => Hashids::encode($transaction->id)]));
 
         }
 
@@ -92,7 +94,15 @@ class PaymentController extends Controller
 
     private function mailReceipt(Transaction $transaction): void 
     {
-        Mail::to($transaction->email)->send(new Receipt($transaction));
+        if(empty($transaction->email)) return;
+
+        try {
+            Mail::to($transaction->email)->send(new Receipt($transaction));
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return;
+        }
+
     }
 
     private function stripeOK(Transaction $transaction): bool
