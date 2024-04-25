@@ -186,4 +186,7 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+
+    'privateroute' => env('PRIVATE_ROUTE'),
+
 ];

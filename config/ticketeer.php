@@ -9,7 +9,7 @@ return [
         ],
         [
             'type' => 'Junior Ticket',
-            'price' => 750,
+            'price' => 700,
             'min' => 0, 
         ],
     ],

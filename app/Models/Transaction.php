@@ -33,4 +33,19 @@ class Transaction extends Model
     {
         return json_decode($this->tickets_bought, true);
     }
+
+    public function getAdultTicketsAttribute()
+    {
+        return collect(json_decode($this->tickets_bought, true))->firstWhere('type','Adult Ticket')['count'];
+    }
+    
+    public function getJuniorTicketsAttribute()
+    {
+        return collect(json_decode($this->tickets_bought, true))->firstWhere('type','Junior Ticket')['count'];
+    }
+
+    public function scopeCompleted(Builder $q): void
+    {
+        $q->whereNotNull('completion');
+    }
 }

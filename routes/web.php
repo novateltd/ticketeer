@@ -5,6 +5,7 @@ use App\Livewire\Tickets;
 use App\Livewire\Payment;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QrCodeController;
+use App\Http\Controllers\TicketSalesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +21,7 @@ use App\Http\Controllers\QrCodeController;
 Route::redirect('/', '/tickets');
 
 Route::get('tickets', Tickets::class)->name('tickets');
+Route::get('ticketsales/' . config('app.privateroute')  , TicketSalesController::class)->name('ticketsales');
 Route::get('payment', Payment::class)->name('payment');
 Route::get('confirmPayment', PaymentController::class)->name('confirmpayment');
 
