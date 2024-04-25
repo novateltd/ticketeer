@@ -10,11 +10,13 @@
                     <th class="text-left">Name (if given)</th>
                     <th class="text-left">email (if given)</th>
                     <th class="text-left">Promo</th>
+                    <th class="text-left">Tickets</th>
                     <th class="text-center">Adults</th>
                     <th class="text-center">Juniors</th>
                     <th class="text-right">Sale Value</th>
                 </tr>
                 <tr class="">
+                    <th class="text-left"></th>
                     <th class="text-left"></th>
                     <th class="text-left"></th>
                     <th class="text-left"></th>
@@ -31,6 +33,7 @@
                     <td class="p-2">{{ $transaction->name }}</td>
                     <td class="p-2">{{ $transaction->email }}</td>
                     <td class="p-2">{{ strtoupper($transaction->promo) }}</td>
+                    <td class="p-2">{{ $transaction->tickets->pluck('number')->implode(', ') }}</td>
                     <td class="p-2 text-center">{{ $transaction->adult_tickets }}</td>
                     <td class="p-2 text-center">{{ $transaction->junior_tickets }}</td>
                     <td class="p-2 text-right">&pound;{{ number_format($transaction->cost/100,2) }}</td>
