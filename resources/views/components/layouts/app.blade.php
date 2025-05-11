@@ -22,7 +22,7 @@
 
 <body class="flex flex-col justify-between min-h-screen font-sans leading-normal tracking-normal bg-white">
 
-	<div class="w-full p-0 m-0 bg-[#ebf8ff] md:flex md:justify-between md:items-center lg:px-32" id="nav">
+	<div class="w-full p-0 m-0 bg-[#ebf8ff] md:flex md:justify-between md:items-center lg:px-32 print:hidden" id="nav">
         <div class="flex items-center justify-between px-4">
 
 		    <div class="">
@@ -39,7 +39,7 @@
         {{ $slot }}
     </main>
 
-    <footer class="bg-gray-900">	
+    <footer class="bg-gray-900 print:hidden">	
         <div class="container flex items-center max-w-6xl px-2 py-8 mx-auto"> 
             <div class="flex flex-wrap items-center w-full mx-auto">
                 <div class="flex justify-start w-1/3">

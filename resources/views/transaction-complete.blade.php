@@ -1,13 +1,15 @@
 <x-layouts.app>
     <div class="my-8">
 
-        <div class="max-w-xl px-4 py-8 mx-auto bg-white rounded-lg shadow-lg">
+        <div class="max-w-xl px-4 py-8 mx-auto bg-white rounded-lg shadow-lg print:shadow-none">
 
-            <h1 class="text-2xl font-bold ">Complete</h1>
-            <h2 class="text-xl font-extrabold text-green-900 uppercase">
-                {{ $transaction->event->description }} {{ $transaction->event->date->format('jS F Y') }} at {{ $transaction->event->time }}</h2>
+            <img src="/images/RotarySimplified.png" class="hidden h-24 mx-auto mt-2 mb-2 print:block"> 
+
+            <h1 class="my-4 text-2xl font-bold text-center">Complete</h1>
+            <h2 class="my-4 text-xl font-extrabold text-center text-green-900 uppercase">{{ $transaction->event->title }}</h2>
+            <p class="my-4 font-semibold text-center">{{ $transaction->event->description }}</p>
             
-            <p>Thankyou, your ticket purchase is complete. We look forward to seeing you.</p>
+            <p>Your ticket purchase is complete. We look forward to seeing you.</p>
 
                 @foreach($transaction->ticketsArray as $line)
             
@@ -41,7 +43,15 @@
                             @endforeach
                     @endif
                 </div>
+                <div class="my-4 text-center print:hidden">If you are unable to print this page, just make a note of your ticket numbers and bring them to the event </div>
                     
+                <div class="w-full my-8 text-center print:hidden">
+                    <a href="/" class="block w-full px-2 py-1 text-xs font-semibold tracking-widest text-center text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md md:px-4 md:py-2 hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'"> Buy more tickets? </a>
+                </div>
+
+                <div class="w-full my-8 italic">
+                    Payment will appear on your statement as RBROTARY.ORG.UK
+                </div>
         </div>
     </div>
 </x-layouts.app>

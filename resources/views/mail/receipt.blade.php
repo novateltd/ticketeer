@@ -1,7 +1,8 @@
 <x-mail::message>
 # Thankyou for purchasing tickets to our event.
 
-# {{ $transaction->event->description }} on {{ $transaction->event->date->format('l jS M y') }} at {{ $transaction->event->time }}
+# {{ $transaction->event->title }}
+## {{ $transaction->event->description }}
 
 # Receipt
 

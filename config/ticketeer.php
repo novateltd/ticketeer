@@ -4,7 +4,7 @@ return [
     'tickets' => [
         [
             'type' => 'Adult Ticket',
-            'price' => 1000,
+            'price' => 1200,
             'min' => 1, 
         ],
         [

@@ -21,7 +21,7 @@ class Receipt extends Mailable
         $this->transaction->loadMissing('event');
 
         return new Envelope(
-            subject: 'Your Receipt for ' . $this->transaction->event->description,
+            subject: 'Your Receipt for ' . $this->transaction->event->title,
         );
     }
 

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->id();
             $table->date('date');
             $table->string('time');
+            $table->string('title');
             $table->text('description');
             $table->string('slug');
             $table->date('onsale');
@@ -28,11 +29,12 @@ return new class extends Migration
         });
 
         $event = Event::forceCreate([
-            'date' => '2024-04-11',
+            'date' => '2025-06-07',
             'time' => '2pm',
-            'description' => '2024 Piano Extravaganza',
-            'slug' => '2024-piano-concert',
-            'onsale' => '2024-03-02',
+            'title' => '2025 Rotary Piano Extravaganza',
+            'slug' => '2025-piano-concert',
+            'onsale' => '2025-03-02',
+            'description' => 'A spectacle of young performers with the piano.  St Peters Church, Ravenshead, NG15 9FD. June 7th 2PM.'
         ]);
 
         Schema::create('tickets', function (Blueprint $table) {

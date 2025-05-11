@@ -135,5 +135,10 @@ class PaymentController extends Controller
         return view('transaction-complete')->withTransaction($transaction);
     }
 
+    public function buymore()
+    {
+        session()->forget('transaction-id');
+        return redirect('/');
+    }
 
 }
