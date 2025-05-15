@@ -13,6 +13,9 @@
 
                 @foreach($transaction->ticketsArray as $line)
             
+                    @if($line['count'] == 0)
+                        @continue
+                    @endif
                     <div class="flex flex-row items-center my-8">
                         <div class="w-1/3 text-lg font-semibold">{{ $line['type'] }} </div>
                         <div class="w-1/3 font-semibold text-center">{{ $line['count'] }}</div>

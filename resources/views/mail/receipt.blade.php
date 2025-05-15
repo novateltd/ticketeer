@@ -9,6 +9,9 @@
 |Type|Number|Cost|
 |:---------|:-----------:|--------:|
 @foreach($transaction->ticketsArray as $line)
+@if($line['count'] == 0)
+    @continue
+@endif
 |{{ $line['type'] }}|{{ $line['count'] }}|{{ Number::currency($line['total']/100, in:'GBP') }}|
 @endforeach
 |||--------|
