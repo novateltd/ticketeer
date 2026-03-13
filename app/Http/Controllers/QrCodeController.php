@@ -18,7 +18,7 @@ class QrCodeController extends Controller
             new ImagickImageBackEnd()
         );
         $writer = new Writer($renderer);
-        $writer->writeFile('https://rbrotary.org.uk/news/2024-piano-concert', 'qrcode.png');
+        $writer->writeFile('https://tickets.rbrotary.org.uk', 'qrcode.png');
         
     }
 }
