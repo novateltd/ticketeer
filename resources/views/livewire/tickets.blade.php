@@ -47,7 +47,7 @@
 
             <div class="w-full p-4 mt-6 border rounded-lg shadow-lg">
                 Please provide a contact name and email address so that we can send you a confirmation of purchase email.
-                We will also use these details incase we need to alter the arrangements for the concert.
+                We will also use these details incase we need to alter the arrangements for the event.
                 <div class="flex items-center my-4">
                     <x-input-label class="w-1/4">Your Name:</x-input-label>
                     <x-text-input class="w-1/2" wire:model="name" type="text" />
