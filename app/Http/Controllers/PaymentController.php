@@ -55,6 +55,7 @@ class PaymentController extends Controller
             $this->issueTickets($transaction);
             $this->mailReceipt($transaction);
 
+            session()->forget('transaction_id_event_' . $transaction->event_id);
             session()->forget('transaction_id');
             return redirect(route('confirmpayment', ['id' => Hashids::encode($transaction->id)]));
 
@@ -71,6 +72,8 @@ class PaymentController extends Controller
 
     private function issueTickets(Transaction $transaction): void
     {
+        $transaction->loadMissing('event');
+
         $transaction->status = TransactionEnum::PAID;
         $transaction->completion = now();
         $transaction->save();
@@ -79,7 +82,11 @@ class PaymentController extends Controller
 
         foreach(range(1, $transaction->ticket_count) as $issue) {
 
-            $ticket = Ticket::where('status', TicketEnum::AVAILABLE->value)->first();
+            $ticket = Ticket::query()
+                ->where('event_id', $transaction->event_id)
+                ->where('status', TicketEnum::AVAILABLE->value)
+                ->orderBy('number')
+                ->first();
 
             if($ticket) {
 

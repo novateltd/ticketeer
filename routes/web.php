@@ -6,6 +6,7 @@ use App\Livewire\Payment;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\TicketSalesController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,13 +19,12 @@ use App\Http\Controllers\TicketSalesController;
 |
 */
 
-Route::redirect('/', '/tickets');
+Route::get('/', HomeController::class)->name('home');
+Route::get('tickets', HomeController::class);
 
-Route::get('tickets', Tickets::class)->name('tickets');
+Route::get('tickets/{event:slug}', Tickets::class)->name('tickets');
 Route::get('ticketsales/' . config('app.privateroute')  , TicketSalesController::class)->name('ticketsales');
 Route::get('payment', Payment::class)->name('payment');
 Route::get('confirmPayment', PaymentController::class)->name('confirmpayment');
 
 Route::get('qrcode', QrCodeController::class);
-
-

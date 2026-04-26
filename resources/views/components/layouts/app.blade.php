@@ -26,7 +26,7 @@
         <div class="flex items-center justify-between px-4">
 
 		    <div class="">
-				<a class="" href="/">
+				<a class="" href="https://rbrotary.org.uk">
                     <img src="/images/club-logo-blue-100.png" class="hidden h-16 mt-2 mb-2 md:block md:h-24"> 
                     <img src="/images/RotarySimplified.png" class="h-16 mt-2 mb-2 md:hidden md:h-24"> 
 				</a>

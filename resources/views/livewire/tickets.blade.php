@@ -4,8 +4,12 @@
 
         <h1 class="text-xl font-extrabold text-center text-green-900 uppercase">{{ $event->title }}<br />
             {{ $event->date->format('jS F Y') }} at {{ $event->time }}</h1>
+        <p class="mt-4 text-center text-zinc-700">{{ $event->description }}</p>
         
         @if($event->isOnsale)
+            @if(empty($this->ticket_choices))
+                <p class="mt-8 text-center text-red-700">Tickets are not configured for this event yet.</p>
+            @else
 
             <div class="grid grid-cols-3 mt-8 mb-4 gap-y-2">
                 @foreach($this->ticket_choices as $choice)
@@ -63,6 +67,7 @@
             <div class="my-6 text-center">
                 <x-primary-button class="justify-center w-full font-bold" wire:click="proceed">Proceed</x-primary-button>
             </div>
+            @endif
             
         @else
             

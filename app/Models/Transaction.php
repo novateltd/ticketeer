@@ -25,7 +25,7 @@ class Transaction extends Model
 
     public function scopePending(Builder $q)
     {
-        $q->where('status',TransactionEnum::PENDING)
+        $q->where('status', TransactionEnum::PENDING->value)
             ->where('created_at', '>', now()->subMinutes(120));
     }
 
@@ -36,12 +36,20 @@ class Transaction extends Model
 
     public function getAdultTicketsAttribute()
     {
-        return collect(json_decode($this->tickets_bought, true))->firstWhere('type','Adult Ticket')['count'];
+        return (int) data_get(
+            collect(json_decode($this->tickets_bought, true))->firstWhere('type', 'Adult Ticket'),
+            'count',
+            0
+        );
     }
     
     public function getJuniorTicketsAttribute()
     {
-        return collect(json_decode($this->tickets_bought, true))->firstWhere('type','Junior Ticket')['count'];
+        return (int) data_get(
+            collect(json_decode($this->tickets_bought, true))->firstWhere('type', 'Junior Ticket'),
+            'count',
+            0
+        );
     }
 
     public function scopeCompleted(Builder $q): void

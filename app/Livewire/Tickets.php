@@ -4,9 +4,8 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Event;
-use App\Enums\TicketEnum;
+use App\Enums\TransactionEnum;
 use App\Models\Transaction;
-use Livewire\Attributes\Session;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
 use Livewire\Attributes\Validate;
@@ -19,28 +18,42 @@ class Tickets extends Component
     public array $ticket_choices = [];
     public int $total = 0;
     public int $event_id;
+    public Event $event;
     public string|null $name = '';
     public string|null $code='';
     public string $promoMessage = '';
     
     #[Validate('email:rfc,dns')]
     public string|null $email = '';
-    
-    #[Session(key: 'transaction_id')]
+
     public int|null $transaction_id = null;
 
-    public function mount()
+    public function mount(Event $event)
     {
-        $this->ticket_choices = config('ticketeer.tickets');
-        
+        $this->event = $event->loadMissing('ticketTypes');
+        $this->event_id = $event->id;
+        $this->ticket_choices = $this->event->ticketTypes
+            ->map(fn ($ticketType) => [
+                'type' => $ticketType->name,
+                'price' => $ticketType->price,
+                'min' => $ticketType->minimum,
+            ])
+            ->values()
+            ->all();
+
         foreach($this->ticket_choices as $key => $choice) {
             $this->tickets[$key]['count'] = $choice['min'];
         }
 
-        $this->event_id = Event::first()->id;
+        $this->transaction_id = session($this->sessionKey());
 
-        if(session('transaction_id',false)) {
+        if($this->transaction_id) {
             $transaction = Transaction::findOrFail($this->transaction_id);
+
+            if ($transaction->event_id !== $this->event_id) {
+                $this->resetTransaction();
+                return;
+            }
 
             $this->email = $transaction->email;
             $this->name = $transaction->name;
@@ -61,7 +74,7 @@ class Tickets extends Component
 
     public function minus($key)
     {
-        if($this->tickets[$key]['count'] != config("ticketeer.tickets.{$key}.min" )) {
+        if($this->tickets[$key]['count'] != ($this->ticket_choices[$key]['min'] ?? 0)) {
             $this->tickets[$key]['count']--;
         }
     }
@@ -72,7 +85,7 @@ class Tickets extends Component
         $this->applyPromo();
         $this->updateTransaction();
 
-        return view('livewire.tickets')->withEvent(Event::find($this->event_id));
+        return view('livewire.tickets')->withEvent($this->event);
     }
 
     public function calculateTotals()
@@ -94,18 +107,20 @@ class Tickets extends Component
 
         $data =  [
             'event_id' => $this->event_id,
-            'status' => TicketEnum::PENDING,
+            'status' => TransactionEnum::PENDING->value,
             'cost' => $this->total,
             'ticket_count' => $count,
-            'description' => Event::where('id',$this->event_id)->value('slug'),
+            'description' => $this->event->title,
         ];
 
         if($this->transaction_id) {
             Transaction::find($this->transaction_id)->update($data);
         } else {
             $this->transaction_id = (Transaction::create($data))->id;
+            session([$this->sessionKey() => $this->transaction_id]);
         }
-            
+
+        session([$this->sessionKey() => $this->transaction_id]);
     }
 
     public function applyPromo()
@@ -114,7 +129,10 @@ class Tickets extends Component
 
         $this->promoMessage = '';
 
-        $code = Promo::where('code',$this->code)->first();
+        $code = Promo::query()
+            ->where('event_id', $this->event_id)
+            ->where('code', strtoupper($this->code))
+            ->first();
 
         if(!$code) {
             $this->promoMessage = 'That is not a valid code';
@@ -150,8 +168,10 @@ class Tickets extends Component
                 'tickets_bought' => $this->tickets,
                 'email' => $this->email,
                 'name' => $this->name,
-                'promo' => $this->code,
+                'promo' => strtoupper($this->code),
             ]);
+
+        session(['transaction_id' => $this->transaction_id]);
 
         if($this->total == 0) {
             return redirect(route('confirmpayment',['redirect_status' => 'succeeded']));
@@ -178,5 +198,16 @@ class Tickets extends Component
 
         $transaction->payment_intent = $paymentIntent->id;
         $transaction->save();
+    }
+
+    private function sessionKey(): string
+    {
+        return 'transaction_id_event_' . $this->event_id;
+    }
+
+    private function resetTransaction(): void
+    {
+        session()->forget($this->sessionKey());
+        $this->transaction_id = null;
     }
 }

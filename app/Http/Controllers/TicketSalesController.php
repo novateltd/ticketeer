@@ -14,7 +14,7 @@ class TicketSalesController extends Controller
     {
         $transactions = Transaction::query()
                     ->completed()
-                    ->with('tickets')
+                    ->with('tickets', 'event')
                     ->latest()
                     ->get();
 

@@ -11,6 +11,8 @@ class Ticket extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     public function event()
     {
         return $this->belongsTo(Event::class);
@@ -24,14 +26,13 @@ class Ticket extends Model
 
     public function scopeAvailable(Builder $q)
     {
-        $q->where('status', TicketEnum::AVAILABLE);
+        $q->where('status', TicketEnum::AVAILABLE->value);
     }
 
     public static function ticketsAvailable(Event $event)
     {
         $pending = $event->transactions()->pending()->sum('ticket_count');
-        dump($pending);
-        
+
         $tickets = $event->tickets()->available()->count();
 
         return $tickets - $pending;
