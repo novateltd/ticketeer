@@ -11,7 +11,11 @@ class Payment extends Component
 {
     public function render()
     {
-        $transaction = Transaction::findOrFail(session('transaction_id'));
+        $transaction = Transaction::with('event')->findOrFail(session('transaction_id'));
+
+        if (! $transaction->event->canSellTickets) {
+            return redirect(route('tickets', $transaction->event));
+        }
 
         Stripe::setApiKey(config('stripe.secret'));
 

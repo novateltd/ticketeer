@@ -6,10 +6,12 @@
             {{ $event->date->format('jS F Y') }} at {{ $event->time }}</h1>
         <p class="mt-4 text-center text-zinc-700">{{ $event->description }}</p>
         
-        @if($event->isOnsale)
-            @if(empty($this->ticket_choices))
-                <p class="mt-8 text-center text-red-700">Tickets are not configured for this event yet.</p>
-            @else
+        @if(empty($this->ticket_choices))
+            <p class="mt-8 text-center text-red-700">Tickets are not configured for this event yet.</p>
+        @elseif($event->isSoldOut)
+            <p class="mt-8 text-xl font-extrabold text-center text-red-700 uppercase">Sold Out</p>
+            <p class="mt-2 text-center text-zinc-700">Sorry, tickets are no longer available for this event.</p>
+        @elseif($event->isOnsale)
 
             <div class="grid grid-cols-3 mt-8 mb-4 gap-y-2">
                 @foreach($this->ticket_choices as $choice)
@@ -65,13 +67,13 @@
             </div>
 
             <div class="my-6 text-center">
+                @error('tickets') <div class="mb-4 font-semibold text-red-600">{{ $message }}</div> @enderror
                 <x-primary-button class="justify-center w-full font-bold" wire:click="proceed">Proceed</x-primary-button>
             </div>
-            @endif
             
         @else
             
-            <p>Sorry tickets only available from {{ $event->onsale->format('jS F Y') }}. Please check back.
+            <p>Sorry tickets only available from {{ $event->onsale->format('jS F Y') }}. Please check back.</p>
                 
         @endif
     </div>

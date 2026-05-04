@@ -52,7 +52,10 @@ class PaymentController extends Controller
 
         if($transaction->cost == 0 || $this->stripeOK($transaction)) {
 
-            $this->issueTickets($transaction);
+            if (! $this->issueTickets($transaction)) {
+                return $this->error('There are not enough tickets left to complete this transaction. Please contact us.');
+            }
+
             $this->mailReceipt($transaction);
 
             session()->forget('transaction_id_event_' . $transaction->event_id);
@@ -70,9 +73,13 @@ class PaymentController extends Controller
         return view('error_view', compact('message'));
     }
 
-    private function issueTickets(Transaction $transaction): void
+    private function issueTickets(Transaction $transaction): bool
     {
         $transaction->loadMissing('event');
+
+        if (! Ticket::hasTicketsAvailable($transaction->event, $transaction->ticket_count, $transaction->id)) {
+            return false;
+        }
 
         $transaction->status = TransactionEnum::PAID;
         $transaction->completion = now();
@@ -97,6 +104,7 @@ class PaymentController extends Controller
             
         }
 
+        return true;
     }
 
     private function mailReceipt(Transaction $transaction): void 

@@ -29,18 +29,24 @@ class Ticket extends Model
         $q->where('status', TicketEnum::AVAILABLE->value);
     }
 
-    public static function ticketsAvailable(Event $event)
+    public static function ticketsAvailable(Event $event, int|null $exceptTransactionId = null)
     {
-        $pending = $event->transactions()->pending()->sum('ticket_count');
+        $pendingQuery = $event->transactions()->pending();
+
+        if ($exceptTransactionId) {
+            $pendingQuery->whereKeyNot($exceptTransactionId);
+        }
+
+        $pending = $pendingQuery->sum('ticket_count');
 
         $tickets = $event->tickets()->available()->count();
 
         return $tickets - $pending;
     }
 
-    public static function hasTicketsAvailable(Event $event, int $number)
+    public static function hasTicketsAvailable(Event $event, int $number, int|null $exceptTransactionId = null)
     {
-        $available = Self::ticketsAvailable($event);
+        $available = Self::ticketsAvailable($event, $exceptTransactionId);
 
         return $available >= $number;
     }

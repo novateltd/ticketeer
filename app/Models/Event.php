@@ -17,6 +17,7 @@ class Event extends Model
         'onsale' => 'date',
         'date' => 'date',
         'capacity' => 'integer',
+        'sales_closed' => 'boolean',
     ];
 
     protected static function booted(): void
@@ -56,6 +57,18 @@ class Event extends Model
     public function getIsOnsaleAttribute()
     {
         return $this->onsale <= today();
+    }
+
+    public function getIsSoldOutAttribute(): bool
+    {
+        return $this->sales_closed || Ticket::ticketsAvailable($this) <= 0;
+    }
+
+    public function getCanSellTicketsAttribute(): bool
+    {
+        return $this->isOnsale
+            && $this->date >= today()
+            && ! $this->isSoldOut;
     }
 
     public function syncTicketInventory(): void

@@ -10,6 +10,7 @@ use Stripe\Stripe;
 use Stripe\PaymentIntent;
 use Livewire\Attributes\Validate;
 use App\Models\Promo;
+use App\Models\Ticket;
 use Illuminate\Support\Arr;
 
 class Tickets extends Component
@@ -69,11 +70,19 @@ class Tickets extends Component
 
     public function plus($key)
     {
+        if (! $this->event->canSellTickets) {
+            return;
+        }
+
         $this->tickets[$key]['count']++;
     }
 
     public function minus($key)
     {
+        if (! $this->event->canSellTickets) {
+            return;
+        }
+
         if($this->tickets[$key]['count'] != ($this->ticket_choices[$key]['min'] ?? 0)) {
             $this->tickets[$key]['count']--;
         }
@@ -81,6 +90,12 @@ class Tickets extends Component
 
     public function render()
     {
+        $this->event->refresh();
+
+        if (! $this->event->canSellTickets) {
+            return view('livewire.tickets')->withEvent($this->event);
+        }
+
         $this->calculateTotals();
         $this->applyPromo();
         $this->updateTransaction();
@@ -155,6 +170,18 @@ class Tickets extends Component
 
     public function proceed()
     {
+        $this->event->refresh();
+
+        if (! $this->event->canSellTickets) {
+            $this->addError('tickets', 'Sorry, this event is sold out.');
+            return;
+        }
+
+        if (! Ticket::hasTicketsAvailable($this->event, array_sum(Arr::pluck($this->tickets, 'count')), $this->transaction_id)) {
+            $this->addError('tickets', 'Sorry, there are not enough tickets left for this order.');
+            return;
+        }
+
         if($this->total > 0) {
             $this->setupPI();
         }
